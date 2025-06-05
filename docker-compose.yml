@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:alpine
+    restart: always
+
+  backend:
+    build: ./backend
+    volumes:
+      - ./backend/app:/app/app
+      - uploads:/app/uploads
+      - outputs:/app/outputs
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    
+    depends_on:
+      - redis
+    ports:
+      - "8008:8000"      
+
+
+  worker:
+    build: ./backend
+    command: celery -A app.tasks worker --loglevel=info
+    volumes:
+      - ./backend/app:/app/app
+      - uploads:/app/uploads
+      - outputs:/app/outputs
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      - redis
+      - backend
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+volumes:
+  uploads:
+  outputs:

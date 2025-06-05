@@ -1,0 +1,10 @@
+fastapi==0.104.1
+uvicorn==0.23.2
+celery==5.3.4
+redis==4.6.0
+python-docx==0.8.11
+docxtpl==0.16.2
+markdown==3.5.1
+beautifulsoup4==4.12.2
+python-multipart==0.0.6
+uvloop==0.17.0
